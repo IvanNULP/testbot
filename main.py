@@ -114,7 +114,7 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         reply = "Та ти вже сам себе перегрузив. Перефразуй нормально 😉"
 
-    await message.reply_text(f"🎭 Стиль: {selected_mode} — {MODES.get(selected_mode, \"Невідомо\")}")
+    await message.reply_text(f"🎭 Стиль: {selected_mode} — {MODES.get(selected_mode, 'Невідомо')}")
     await message.reply_text(reply)
 
 application = ApplicationBuilder().token(BOT_TOKEN).build()
