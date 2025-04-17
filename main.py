@@ -66,7 +66,7 @@ async def determine_best_mode(user_text: str) -> str:
         max_tokens=10,
     )
     selected = response.choices[0].message.content.strip().lower()
-    return selected if selected in MODES else "superexpert"
+    return selected if selected in MODES else "poder"
 
 async def generate_reply(user_text: str, mode: str, replied_text: str = "", history: str = "") -> str:
     character_prompt = MODES.get(mode, MODES["superexpert"])
