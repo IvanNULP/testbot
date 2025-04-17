@@ -53,42 +53,46 @@ async def set_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Невідомий режим.")
 
 async def determine_best_mode(user_text: str, history: str, replied_text: str) -> str:
+    # Підвищуємо шанс подерв’янського до 20%
     if random.random() < 0.2:
         return "poder"
     
-    mode_prompt = f"""
-На основі наступного повідомлення користувача обери, який стиль тролінгу краще підійде. 
-Оберіть лише один із таких варіантів: polit_anal, superexpert, zrada, zel_bot, balashov, vorchun, poder.
-
-Контекст чату (може бути порожнім):
-{history}
-
-Якщо це відповідь на інше повідомлення, ось воно:
-{replied_text}
-
-Користувач написав:
-{user_text}
-
-Сформулюй коротку, колючу відповідь (1-2 речення), у формі прямого звернення на 'ти'.
-"""
+    mode_prompt = (
+        "Ти вибираєш стиль тролінгу для відповіді на повідомлення самозакоханого експерта, "
+        "який вважає себе дуже розумним. Обери стиль з наступних: polit_anal, superexpert, zrada, "
+        "zel_bot, balashov, vorchun, poder. Враховуй суть повідомлення, його пафос, тон, стиль. "
+        "Контекст і попередні відповіді можуть допомогти зрозуміти ситуацію. "
+        "Пояснюй нічого не треба, просто поверни назву режиму.\n\n"
+        f"Контекст чату: {history}\n"
+        f"Якщо це відповідь на інше повідомлення: {replied_text}\n"
+        f"Користувач написав: {user_text}"
+    )
 
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": mode_prompt}],
-        temperature=0.95,
-        max_tokens=140,
+        temperature=0.7,
+        max_tokens=10,
     )
-    return response.choices[0].message.content.strip()
+    mode = response.choices[0].message.content.strip().lower()
+    return mode if mode in MODES else "poder"
 
 async def generate_reply(user_text: str, selected_mode: str, replied_text: str, history: str) -> str:
-    prompt = f"""Стиль: {MODES[selected_mode]}
-Повідомлення: {user_text}
-"""
+    prompt = (
+        f"Ти — {MODES[selected_mode]}. "
+        "Твоє завдання — троллінг-відповідь самозакоханому всезнайку, який впевнений, що знає все краще за всіх. "
+        "Твоя відповідь має бути жорсткою, з іронією, сатирою, можливо сарказмом і навіть образою. "
+        "Звертайся виключно на 'ти'. Не пояснюй, не виправдовуйся. "
+        f"Контекст: {history}\n"
+        f"Якщо це відповідь на інше повідомлення: {replied_text}\n"
+        f"Повідомлення: {user_text}"
+    )
+
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.95,
-        max_tokens=140,
+        max_tokens=150,
     )
     return response.choices[0].message.content.strip()
 
@@ -110,13 +114,13 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
             selected_mode = await determine_best_mode(user_text, history, replied_text)
         else:
             selected_mode = CURRENT_MODE["mode"]
-        reply = f"DEBUG: mode={selected_mode}, текст={user_text}"
+        reply = await generate_reply(user_text, selected_mode, replied_text, history)
     except Exception as e:
         import traceback
         traceback.print_exc()
         print(f"❌ Помилка: {e}")
-        print(f"❌ Помилка під час генерації: {e}")
         reply = "Та ти вже сам себе перегрузив. Перефразуй нормально 😉"
+        selected_mode = "poder"
 
     await message.reply_text(f"{reply} {EMOJIS.get(selected_mode, '🎭')}", reply_to_message_id=message.message_id)
 
