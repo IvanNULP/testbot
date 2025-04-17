@@ -35,10 +35,10 @@ async def set_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != AUTHORIZED_USER_ID:
         return
     if not context.args or context.args[0] not in MODES:
-        await update.message.reply_text(f"Доступні режими: {', '.join(MODES.keys())}")
+        await update.message.reply_text("Доступні режими: " + ", ".join(MODES.keys()))
         return
     CURRENT_MODE["mode"] = context.args[0]
-    await update.message.reply_text(f"Режим змінено на: {context.args[0]}")
+    await update.message.reply_text("Режим змінено на: " + context.args[0])
 
 def get_mode_description(mode: str):
     if mode == "random":
@@ -47,14 +47,10 @@ def get_mode_description(mode: str):
 
 async def generate_reply(text: str, mode: str) -> str:
     character_prompt = get_mode_description(mode)
-    prompt = f"""
-Ти троллячий AI. Стиль — чорний гумор, політична сатира, сарказм. Образ: {character_prompt}
-
-Повідомлення користувача:
-"{text}"
-
-Надай троллячу відповідь у стилі (1-2 речення).
-"""
+    prompt = (
+        "Ти троллячий AI. Стиль — чорний гумор, політична сатира, сарказм. Образ: " + character_prompt +
+        "\n\nПовідомлення користувача:\n"" + text + ""\n\nНадай троллячу відповідь у стилі (1-2 речення)."
+    )
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
@@ -72,7 +68,7 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if message.text:
         user_text = message.text
     elif message.caption:
-        user_text = f"(Медіа з підписом): {message.caption}"
+        user_text = "(Медіа з підписом): " + message.caption
     elif message.sticker:
         user_text = "(Надіслано стікер)"
     elif message.animation:
@@ -86,8 +82,7 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if message.reply_to_message and message.reply_to_message.text:
         replied = message.reply_to_message.text
-        user_text = f"Відповідь на чужий текст: "{replied}"
-Користувач написав: {user_text}"
+        user_text = "Відповідь на чужий текст: "" + replied + ""\nКористувач написав: " + user_text
 
     try:
         reply = await generate_reply(user_text, CURRENT_MODE["mode"])
@@ -106,7 +101,7 @@ async def on_startup(app: web.Application):
     await application.initialize()
     webhook_url = os.getenv("RENDER_EXTERNAL_URL") + "/webhook"
     await application.bot.set_webhook(webhook_url)
-    print(f"📡 Webhook встановлено: {webhook_url}")
+    print("📡 Webhook встановлено: " + webhook_url)
     app["application"] = application
 
 async def handle_webhook(request: web.Request):
@@ -121,5 +116,5 @@ app.on_startup.append(on_startup)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    print(f"🚀 Запуск сервера на порту {port}")
+    print("🚀 Запуск сервера на порту", port)
     web.run_app(app, host="0.0.0.0", port=port)
