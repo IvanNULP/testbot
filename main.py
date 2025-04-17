@@ -84,7 +84,6 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         user_text = "(Невідоме медіа)"
 
-    # якщо це відповідь на чуже повідомлення — додай контекст
     if message.reply_to_message and message.reply_to_message.text:
         user_text = f"Відповідь на чужий текст: "{message.reply_to_message.text}"
 Користувач написав: {user_text}"
