@@ -1,4 +1,3 @@
-
 import os
 import random
 from aiohttp import web
@@ -82,9 +81,9 @@ async def determine_best_mode(user_text: str, history: str, replied_text: str) -
     return response.choices[0].message.content.strip()
 
 async def generate_reply(user_text: str, selected_mode: str, replied_text: str, history: str) -> str:
-    prompt = f"Стиль: {MODES[selected_mode]}
+    prompt = f"""Стиль: {MODES[selected_mode]}
 Повідомлення: {user_text}
-"
+"""
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
