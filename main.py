@@ -85,7 +85,8 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_text = "(Невідоме медіа)"
 
     if message.reply_to_message and message.reply_to_message.text:
-        user_text = f"Відповідь на чужий текст: "{message.reply_to_message.text}"
+        replied = message.reply_to_message.text
+        user_text = f"Відповідь на чужий текст: "{replied}"
 Користувач написав: {user_text}"
 
     try:
