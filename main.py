@@ -7,11 +7,13 @@ from telegram.ext import (
     ContextTypes,
     filters,
 )
-import openai
+from openai import OpenAI
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 AUTHORIZED_USER_ID = 412991871
-openai.api_key = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Генератор троллячих відповідей
 async def generate_trolling_reply(message_text: str) -> str:
@@ -23,7 +25,7 @@ async def generate_trolling_reply(message_text: str) -> str:
 
 Надай коротку, але яскраву троллячу відповідь (1-2 речення), без пояснень.
 """
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "user", "content": prompt}
