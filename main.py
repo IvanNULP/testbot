@@ -111,7 +111,8 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             selected_mode = CURRENT_MODE["mode"]
         reply = await generate_reply(user_text, selected_mode, replied_text, history)
-    except Exception:
+    except Exception as e:
+        print(f"❌ Помилка під час генерації: {e}")
         reply = "Та ти вже сам себе перегрузив. Перефразуй нормально 😉"
 
     await message.reply_text(f"{reply} {EMOJIS.get(selected_mode, '🎭')}")
