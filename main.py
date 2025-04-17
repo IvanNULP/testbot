@@ -50,15 +50,17 @@ async def set_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Невідомий режим.")
 
 async def determine_best_mode(user_text: str) -> str:
-    mode_prompt = (
-        "На основі наступного повідомлення користувача обери, який стиль тролінгу краще підійде. "
-        "Оберіть лише один із таких варіантів: " + ", ".join(MODES.keys()) + ". "
-        "Повідомлення користувача:
-" + user_text + "
+    mode_prompt = f"""
+На основі наступного повідомлення користувача обери, який стиль тролінгу краще підійде. 
+Оберіть лише один із таких варіантів: rostv, deputat, batya_fb, futboll, polit_anal, superexpert, zrada, ukr_politdivan, vsya_planeta, divan_expert, zel_bot, balashov, vorchun, poder. 
 
-"
-        "Відповідь — тільки одне слово: ключ стилю без лапок (наприклад: zrada)"
-    )
+
+Повідомлення користувача:
+{user_text}
+
+
+Відповідь — тільки одне слово: ключ стилю без лапок (наприклад: zrada)
+"""
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": mode_prompt}],
@@ -112,6 +114,7 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         reply = "Та ти вже сам себе перегрузив. Перефразуй нормально 😉"
 
+    await message.reply_text(f"🎭 Стиль: {selected_mode} — {MODES.get(selected_mode, \"Невідомо\")}")
     await message.reply_text(reply)
 
 application = ApplicationBuilder().token(BOT_TOKEN).build()
