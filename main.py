@@ -69,7 +69,7 @@ async def determine_best_mode(user_text: str, history: str, replied_text: str) -
 Користувач написав:
 {user_text}
 
-Сформулюй коротку, колючу відповідь (1-2 речення), у формі прямого звернення на 'ти'.
+Сформулюй коротку, колючу відповідь (1-2 речення), у формі прямого звернення на 'ти', відповідь має бути троллінгом, жорстким з контраргументом, з контекстом як відповідь на повідомлення,  має бути гумор.
 """
 
     response = client.chat.completions.create(
@@ -115,7 +115,7 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(f"❌ Помилка під час генерації: {e}")
         reply = "Та ти вже сам себе перегрузив. Перефразуй нормально 😉"
 
-    await message.reply_text(f"{reply} {EMOJIS.get(selected_mode, '🎭')}")
+    await message.reply_text(f"{reply} {EMOJIS.get(selected_mode, '🎭')}", reply_to_message_id=message.message_id)
 
 application = ApplicationBuilder().token(BOT_TOKEN).build()
 application.add_handler(CommandHandler("mode", set_mode))
