@@ -12,7 +12,7 @@ from telegram.ext import (
 from openai import OpenAI
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-AUTHORIZED_USER_ID = 412991871
+AUTHORIZED_USER_ID = 384210176
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 client = OpenAI(api_key=OPENAI_API_KEY)
