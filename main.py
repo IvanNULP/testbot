@@ -18,21 +18,25 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 MODES = {
-    "rostv": "Пропагандист з росТБ.",
-    "deputat": "Депутат з пафосом і бздуром.",
-    "batya_fb": "Батя, що скучив за СРСР.",
-    "futboll": "Футбольний коментатор з дивану.",
+    "deputat": "Депутат з пафосом і бздуром.",    "futboll": "Футбольний коментатор з дивану.",
     "polit_anal": "Диванний політичний аналітик.",
     "superexpert": "Все знає, нічого не розуміє.",
-    "zrada": "Зрадо-патріот із чорним гумором.",
-    "ukr_politdivan": "Марафонщик-коментатор із ТБ.",
-    "vsya_planeta": "Експерт всія планети.",
-    "divan_expert": "Диванний експерт.",
-    "zel_bot": "Бот Зеленського.",
+    "zrada": "Зрадо-патріот із чорним гумором.",    "zel_bot": "Бот Зеленського.",
     "balashov": "Свідок Балашова.",
     "vorchun": "Ворчун-бурчун.",
     "poder": "Лесь Подервʼянський-стайл: пафос, матюки, інтелектуальна сатира, гротеск і театр."
 }
+
+EMOJIS = {
+    "deputat": "🏛",    "futboll": "⚽️",
+    "polit_anal": "📊",
+    "superexpert": "🧠",
+    "zrada": "🇺🇦",    "zel_bot": "🤖",
+    "balashov": "💸",
+    "vorchun": "🧓",
+    "poder": "🎭"
+}
+
 
 CURRENT_MODE = {"mode": "auto"}
 
@@ -52,33 +56,7 @@ async def set_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def determine_best_mode(user_text: str) -> str:
     mode_prompt = f"""
 На основі наступного повідомлення користувача обери, який стиль тролінгу краще підійде. 
-Оберіть лише один із таких варіантів: rostv, deputat, batya_fb, futboll, polit_anal, superexpert, zrada, ukr_politdivan, vsya_planeta, divan_expert, zel_bot, balashov, vorchun, poder. 
-
-
-Повідомлення користувача:
-{user_text}
-
-
-Відповідь — тільки одне слово: ключ стилю без лапок (наприклад: zrada)
-"""
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": mode_prompt}],
-        temperature=0.5,
-        max_tokens=10,
-    )
-    selected = response.choices[0].message.content.strip().lower()
-    return selected if selected in MODES else "poder"
-
-async def generate_reply(user_text: str, mode: str, replied_text: str = "", history: str = "") -> str:
-    character_prompt = MODES.get(mode, MODES["superexpert"])
-    prompt = (
-        "Ти — український троль з характером. Ти звертаєшся до користувача виключно на 'ти'. "
-        "Твоя задача — не просто відповісти, а опонувати: жорстко, дотепно, саркастично, з емоційним підколом. "
-        "Ти маєш зачепитися за його фразу й зробити контркоментар. "
-        "Реагуй точно на суть повідомлення. "
-        "Формулюй відповідь грамотно, синтаксично і стилістично правильно. "
-        f"Обраний стиль персонажа: {character_prompt}\n\n"
+Оберіть лише один із таких варіантів: deputat, futboll, polit_anal, superexpert, zrada, divan_expert, zel_bot, balashov, vorchun, poder\n\n"
         f"Контекст чату (може бути порожнім):\n{history}\n\n"
         f"Якщо це відповідь на інше повідомлення, ось воно:\n{replied_text}\n\n"
         f"Користувач написав:\n{user_text}\n\n"
@@ -114,8 +92,7 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         reply = "Та ти вже сам себе перегрузив. Перефразуй нормально 😉"
 
-    await message.reply_text(f"🎭 Стиль: {selected_mode} — {MODES.get(selected_mode, 'Невідомо')}")
-    await message.reply_text(reply)
+    await message.reply_text(f"{reply} {EMOJIS.get(selected_mode, '🎭')}")
 
 application = ApplicationBuilder().token(BOT_TOKEN).build()
 application.add_handler(CommandHandler("mode", set_mode))
