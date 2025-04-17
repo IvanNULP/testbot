@@ -69,7 +69,7 @@ async def determine_best_mode(user_text: str, history: str, replied_text: str) -
 Користувач написав:
 {user_text}
 
-Сформулюй коротку, колючу відповідь (1-2 речення), у формі прямого звернення на 'ти', відповідь має бути троллінгом, жорстким з контраргументом, з контекстом як відповідь на повідомлення,  має бути гумор.
+Сформулюй коротку, колючу відповідь (1-2 речення), у формі прямого звернення на 'ти'.
 """
 
     response = client.chat.completions.create(
@@ -110,8 +110,11 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
             selected_mode = await determine_best_mode(user_text, history, replied_text)
         else:
             selected_mode = CURRENT_MODE["mode"]
-        reply = await generate_reply(user_text, selected_mode, replied_text, history)
+        reply = f"DEBUG: mode={selected_mode}, текст={user_text}"
     except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(f"❌ Помилка: {e}")
         print(f"❌ Помилка під час генерації: {e}")
         reply = "Та ти вже сам себе перегрузив. Перефразуй нормально 😉"
 
