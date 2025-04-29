@@ -39,7 +39,7 @@ EMOJIS = {
     "vorchun": "🧓",
     "poder": "🎭",
     "visionary": "🔮",
-    "kum": "🧅"
+    "kum": "🧅",
     "rashn_tv": "📺"
 }
 
