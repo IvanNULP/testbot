@@ -116,6 +116,7 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "Враховуй суть повідомлення, його пафос, тон, стиль, суть гіфки чи смайлів. І обов'язково використай стиль троллінгу щоб відповідь стосувалась саме троллінгу. Можеш інколи виступати як троллінг-провокатор і використовувати чорний гумор. "
                 "Відповідай як контраргумент, будь інколи але не завжди цінічним. "                
                 "Максимум 3 речення. Можна гіфки або емодзі. "
+                "Переконайся, що відповідь є завершеним реченням. Не обривай думку. Не закінчуй на частині думки."
                 f"Контекст:\n{history_text}\n"
                 f"Попереднє повідомлення:\n{replied_text or '—'}\n"
                 f"Повідомлення:\n{message.text}"
@@ -130,6 +131,7 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "Максимум 3 речення. Можна матюки, якщо пасує. "
                 "Можеш надавати історичні факти або реальні факти, щоб заткнути опонента. "
                 "Не використовуй слово самозакоханий і всезнайко. "
+                "Переконайся, що відповідь є завершеним реченням. Не обривай думку. Не закінчуй на частині думки."
                 f"Контекст:\n{history_text}\n"
                 f"Попереднє повідомлення:\n{replied_text or '—'}\n"
                 f"Повідомлення:\n{message.text}"
@@ -139,7 +141,7 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
         response = client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "system", "content": prompt}],
-            temperature=0.7,
+            temperature=0.8,
             max_tokens=150
         )
         reply = response.choices[0].message.content.strip()
