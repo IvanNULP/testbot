@@ -142,7 +142,7 @@ async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
             model="gpt-4",
             messages=[{"role": "system", "content": prompt}],
             temperature=0.8,
-            max_tokens=150
+            max_tokens=200
         )
         reply = response.choices[0].message.content.strip()
         if not is_sentence_complete(reply):
