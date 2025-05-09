@@ -107,7 +107,19 @@ async def generate_reply(user_text: str, selected_mode: str, replied_text: str, 
 
 async def handle_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message: Message = update.message
-    if not message or update.effective_user.id != AUTHORIZED_USER_ID:
+    if not message:
+        return
+
+    is_authorized = update.effective_user.id == AUTHORIZED_USER_ID
+
+    # Якщо це відповідь на повідомлення, яке надіслав бот — дозволити навіть неавторизованому
+    is_reply_to_bot = (
+        message.reply_to_message and
+        message.reply_to_message.from_user and
+        message.reply_to_message.from_user.is_bot
+    )
+
+    if not is_authorized and not is_reply_to_bot:
         return
 
     user_text = message.text or message.caption or "(Медіа або стікер)"
